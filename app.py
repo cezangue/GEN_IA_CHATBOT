@@ -10,9 +10,9 @@ from langchain.chains import RetrievalQA
 from langchain_huggingface import HuggingFaceEndpoint
 
 # Définition du token et du modèle
-HF_TOKEN = os.getenv("HF_TOKEN")
+HF_TOKEN = st.secrets.get("HF_TOKEN")
 if not HF_TOKEN:
-    st.error("⚠️ Hugging Face token non défini ! Vérifiez votre environnement.")
+    st.error("⚠️ Hugging Face token non défini ! Vérifiez vos secrets sur Streamlit Cloud.")
     st.stop()
 
 MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"
