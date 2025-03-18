@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -10,12 +9,12 @@ from langchain.chains import RetrievalQA
 from langchain_huggingface import HuggingFaceEndpoint
 
 # Récupérer le jeton Hugging Face
-HF_TOKEN = st.secrets["HF_TOKEN"]
+HF_TOKEN = st.secrets.get("HF_TOKEN")
 if not HF_TOKEN:
-    raise ValueError("⚠️ Hugging Face token non défini ! Vérifiez votre environnement.")
-#HF_TOKEN = os.getenv("HF_TOKEN")
-#if not HF_TOKEN:
-   # raise ValueError("⚠️ Hugging Face token non défini ! Vérifiez votre environnement.")
+    st.error("⚠️ Hugging Face token non défini ! Vérifiez vos secrets sur Streamlit Cloud.")
+    st.stop()
+
+# Configuration du modèle Hugging Face
 MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"
 llm = HuggingFaceEndpoint(
     repo_id=MODEL_ID,
@@ -33,7 +32,7 @@ def scrape_articles(url):
         response = requests.get(url, timeout=10)
         response.raise_for_status()
     except requests.RequestException as e:
-        print(f"🚨 Erreur : {e}")
+        st.error(f"🚨 Erreur lors de la récupération de la page : {e}")
         return []
 
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -52,7 +51,7 @@ def scrape_articles(url):
             if content:
                 articles.append(Document(page_content=f"{title}\n\n{content}", metadata={"url": full_link}))
         except requests.RequestException as e:
-            print(f"❌ Impossible de récupérer {full_link} : {e}")
+            st.warning(f"❌ Impossible de récupérer {full_link} : {e}")
     return articles
 
 # Prétraiter les articles
@@ -62,6 +61,10 @@ def preprocess_articles(documents):
 # Chargement des articles
 base_url = "https://www.agenceecofin.com/"
 documents = scrape_articles(base_url)
+if not documents:
+    st.error("Aucun article n'a été récupéré. Vérifiez l'URL ou la connexion Internet.")
+    st.stop()
+
 processed_articles = preprocess_articles(documents)
 
 # Créer des embeddings
@@ -73,9 +76,12 @@ qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=vectorstore.as_retriev
 
 # Fonction de réponse
 def repondre(question):
-    reponse = qa_chain.run(question)
-    sources = [doc.metadata["url"] for doc in qa_chain.retriever.get_relevant_documents(question)]
-    return f"{reponse}\n\nSources:\n" + "\n".join(sources)
+    try:
+        reponse = qa_chain.run(question)
+        sources = [doc.metadata["url"] for doc in qa_chain.retriever.get_relevant_documents(question)]
+        return f"{reponse}\n\nSources:\n" + "\n".join(sources)
+    except Exception as e:
+        return f"❌ Erreur lors de la génération de la réponse : {e}"
 
 # Interface Streamlit
 st.title("Chatbot RAG")
