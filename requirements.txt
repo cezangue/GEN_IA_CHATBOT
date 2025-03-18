@@ -1,8 +1,10 @@
-langchain-huggingface
-langchain==0.0.200  # Vérifiez la version appropriée dans la documentation de langchain
-faiss-cpu
-sentence-transformers
-beautifulsoup4
-requests
-streamlit
+langchain==0.0.346
+langchain-huggingface==0.0.2
+faiss-cpu==1.7.4
+sentence-transformers==2.2.2
+beautifulsoup4==4.12.2
+requests==2.31.0
+streamlit==1.27.0
 pydantic==1.10.13
+transformers==4.34.0
+huggingface-hub==0.17.3
