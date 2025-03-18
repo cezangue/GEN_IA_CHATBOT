@@ -1,3 +1,4 @@
+langchain-huggingface
 langchain==0.0.200  # Vérifiez la version appropriée dans la documentation de langchain
 faiss-cpu
 sentence-transformers
@@ -7,5 +8,3 @@ streamlit
 pydantic==1.10.13
 langchain==0.1.10
 langchain-community==0.0.30
-langchain-huggingface==0.1.6
-pydantic==1.10.13
