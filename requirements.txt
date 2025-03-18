@@ -1,0 +1,7 @@
+langchain-huggingface
+langchain
+faiss-cpu
+sentence-transformers
+beautifulsoup4
+requests
+streamlit
