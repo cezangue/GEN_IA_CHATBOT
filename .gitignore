@@ -1,0 +1,10 @@
+# Ignorer les fichiers Python compilés
+*.pyc
+__pycache__/
+
+# Ignorer les environnements virtuels
+venv/
+env/
+
+# Ignorer le fichier de jeton HuggingFace (si tu ne veux pas le partager publiquement)
+HF_TOKEN
