@@ -10,9 +10,12 @@ from langchain.chains import RetrievalQA
 from langchain_huggingface import HuggingFaceEndpoint
 
 # Récupérer le jeton Hugging Face
-HF_TOKEN = os.getenv("HF_TOKEN")
+HF_TOKEN = st.secrets["HF_TOKEN"]
 if not HF_TOKEN:
     raise ValueError("⚠️ Hugging Face token non défini ! Vérifiez votre environnement.")
+#HF_TOKEN = os.getenv("HF_TOKEN")
+#if not HF_TOKEN:
+   # raise ValueError("⚠️ Hugging Face token non défini ! Vérifiez votre environnement.")
 MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"
 llm = HuggingFaceEndpoint(
     repo_id=MODEL_ID,
