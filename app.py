@@ -53,10 +53,13 @@ if not documents:
 else:
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     vectorstore = FAISS.from_documents(documents, embeddings)
-    from langchain.chains import ConversationalRetrievalChain
 
-    qa_chain = ConversationalRetrievalChain.from_llm(llm=llm, retriever=vectorstore.as_retriever())
-
+    # Utilisation de RetrievalQA au lieu de ConversationalRetrievalChain
+    qa_chain = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=vectorstore.as_retriever()
+    )
 
     # Interface Streamlit
     st.title("🤖 Agent Conversationnel")
@@ -69,4 +72,3 @@ else:
             st.write("📝 Réponse :", reponse)
         else:
             st.warning("Veuillez entrer une question.")
-
